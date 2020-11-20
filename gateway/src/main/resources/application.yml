@@ -6,6 +6,38 @@ server:
 spring:
   application:
     name: office-mis-gateway
+  cloud:
+    nacos:
+      config:
+        # 是否开启配置中心，默认true
+        enabled: true
+        server-addr: ${spring.cloud.client.ip-address}:8848
+        # 命名空间的id
+        namespace: GATEWAY
+        group: GATEWAY
+        router-data-id: gateway-router.json
+      discovery:
+        # 是否开启注册中心，默认true
+        enabled: true
+        group: ${spring.cloud.nacos.config.group}
+        # 默认应用名
+        service: ${spring.application.name}
+        server-addr: ${spring.cloud.nacos.config.server-addr}
+        namespace: ${spring.cloud.nacos.config.namespace}
+    gateway:
+      enabled: true
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin, RETAIN_UNIQUE
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedHeaders: '*'
+            allowedMethods: '*'
+            allowedOrigins: '*'
 
 management:
   port: ${server.port}
@@ -25,14 +57,7 @@ info:
     java:
       version: @java.version@
 
-eureka:
-  instance:
-    perfer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://${spring.cloud.client.ip-address}:8082/eureka
+
 
 
 
